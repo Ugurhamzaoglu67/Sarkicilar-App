@@ -26,14 +26,20 @@ public class DataSource {
     public static final String SUTUN_SARKI_ADI = "sarkiAdi";
     public static final String SUTUN_SARKI_ALBUMID = "albumID";
 
+    //SIRALAMASI
+    public static final int ARTAN_SIRADA = 1;
+    public static final int AZALAN_SIRADA = 2;
 
-    // DB BAĞLANTI
+
+
+    // DB
     private Connection baglanti;
 
+    // DB BAĞLANTI AÇ
     public boolean veriTabaniBaglantiAc() {
         try {
             baglanti = DriverManager.getConnection(CONNECTION_STRING);
-            System.out.println("Bağlantı Gerçekleşti....");
+            System.out.println("Bağlantı Gerçekleşti....\n");
             return true;
 
         } catch (SQLException e) {
@@ -42,13 +48,13 @@ public class DataSource {
         }
     }
 
-
+    // DB BAĞLANTI OFF
     public void veriTabaniBaglantisiniKapat() {
 
         try {
             if (baglanti != null) {
                 baglanti.close();
-                System.out.println("Bağlantı başarıyla kapatıldı...");
+                System.out.println("\n\nBağlantı başarıyla kapatıldı...");
             }
 
         } catch (SQLException e) {
@@ -58,28 +64,44 @@ public class DataSource {
 
     }
 
-    public ArrayList<Sarkici> tumSarkicilariGoster() {
 
-            try(
-                Statement statement = baglanti.createStatement();
-                ResultSet sonuc = statement.executeQuery("SELECT * FROM "+TABLO_SARKICI); ){
+    // TÜM ŞARKICILARI GÖSTER
+    public ArrayList<Sarkici> tumSarkicilariGoster(int siralama) {
+        StringBuilder sb = new StringBuilder("SELECT * FROM ");
+        sb.append(TABLO_SARKICI);
 
-                ArrayList<Sarkici> tumSarkicilar = new ArrayList<>();
+        if(siralama == ARTAN_SIRADA){
+            sb.append(" ORDER BY ");
+            sb.append(SUTUN_SARKICI_ADI);
+            sb.append(" ASC");
 
-                while(sonuc.next()){
-                    Sarkici sarkici = new Sarkici();
-                    sarkici.setSarkiciId(sonuc.getInt(SUTUN_SARKICI_ID));
-                    sarkici.setSarkiciAdi(sonuc.getString(SUTUN_SARKICI_ADI));
-                    tumSarkicilar.add(sarkici);
+        } else {
+            sb.append(" ORDER BY ");
+            sb.append(SUTUN_SARKICI_ADI);
+            sb.append(" DESC");
+        }
 
-                }
 
-                return tumSarkicilar;
+        try(
+            Statement statement = baglanti.createStatement();
+            ResultSet sonuc = statement.executeQuery(sb.toString()); ){
 
-            }  catch (SQLException e) {
-                System.out.println("Hata : "+e);
-                return null;
+            ArrayList<Sarkici> tumSarkicilar = new ArrayList<>();
+
+            while(sonuc.next()){
+                Sarkici sarkici = new Sarkici();
+                sarkici.setSarkiciId(sonuc.getInt(SUTUN_SARKICI_ID));
+                sarkici.setSarkiciAdi(sonuc.getString(SUTUN_SARKICI_ADI));
+                tumSarkicilar.add(sarkici);
+
             }
+
+            return tumSarkicilar;
+
+        }  catch (SQLException e) {
+            System.out.println("Hata : "+e);
+            return null;
+        }
     }
 
 

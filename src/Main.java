@@ -11,7 +11,7 @@ public class Main {
 
 
 
-        ArrayList<Sarkici>  allSinger = dataSource.tumSarkicilariGoster();
+        ArrayList<Sarkici>  allSinger = dataSource.tumSarkicilariGoster(DataSource.ARTAN_SIRADA);
 
 
         if(allSinger == null){
@@ -33,11 +33,6 @@ public class Main {
             3- SONRA ONLARI KULLANIYORUM.
 
          */
-
-
-
-
-
 
 
     }
